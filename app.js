@@ -39,5 +39,34 @@ app.post('/store-user', function(req, res){
 });
 
 
+app.get('/users', function(req, res) {
+    const filePath = path.join(__dirname, 'data', 'users.json');
+
+    try {
+        // check if file exists
+        if (!fs.existsSync(filePath)) {
+            return res.send('<h1>No users found</h1>');
+        }
+
+        const fileData = fs.readFileSync(filePath);
+        const existingUsers = JSON.parse(fileData);
+
+        let responseData = '<h1>Users list</h1><ul>';
+
+        for (const user of existingUsers) {
+            responseData += `<li>${user}</li>`;
+        }
+
+        responseData += '</ul>';
+
+        res.send(responseData);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('<h1>Error reading users data</h1>');
+    }
+});
+
+
 
 app.listen(3001);
