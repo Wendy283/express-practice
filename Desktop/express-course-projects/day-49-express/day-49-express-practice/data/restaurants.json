@@ -30,5 +30,13 @@
     "website": "https://casadasabor.com",
     "description": "amazine\r\n\r\n",
     "id": "6d52da30-eee3-4f79-b398-bab17b3f8663"
+  },
+  {
+    "name": "Wendy",
+    "address": "example.com",
+    "cuisine": "african",
+    "website": "https://romz.com",
+    "description": "kkk",
+    "id": "ebbac638-7fd0-44ed-8f20-8e4582817656"
   }
 ]

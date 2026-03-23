@@ -1,85 +1,47 @@
-const fs = require('fs');
 const path = require('path');
 
 const express = require('express');
-const uuid = require('uuid');
+
+const defaultRoutes = require('./routes/default');
+const restaurantRoutes = require('./routes/restaurants');
 
 const app = express();
 
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
-app.get('/', function (req, res) {
-    res.send('<h1>Hello World</h1>');
-});
 
-app.get('/restaurants', (req, res) => {
-     const filePath = path.join(__dirname, 'data', 'restaurants.json');
-
-    const fileData = fs.readFileSync(filePath);
-    const storedRestaurants = JSON.parse(fileData);
-
-  res.render('restaurants', {numberOfRestaurants: storedRestaurants.length, restaurants: storedRestaurants});
-});
-
-   app.get('/restaurants/:id', (req, res) => {
-    const restaurantId = req.params.id;
-    const filePath = path.join(__dirname, 'data', 'restaurants.json');
-
-    const fileData = fs.readFileSync(filePath);
-    const storedRestaurants = JSON.parse(fileData);
-
-    for (const restaurant of storedRestaurants) {
-        if (restaurant.id === restaurantId) {
-            return res.render('restaurant-detail', {restaurant: restaurant });
-        }
-    }
-     res.render('404');
-   });
-
-app.get('/recommend', function (req, res) {
-    res.render('recommend');
-});
-
-app.post('/recommend', function (req, res) {
-    const restaurant = req.body;
-    restaurant.id  = uuid.v4();
-    const filePath = path.join(__dirname, 'data', 'restaurants.json');
-
-    const fileData = fs.readFileSync(filePath);
-    const storedRestaurants = JSON.parse(fileData);
+app.use('/', defaultRoutes);
+app.use('/', restaurantRoutes);
 
 
-    storedRestaurants.push(restaurant);
-
-    fs.writeFileSync(filePath, JSON.stringify(storedRestaurants, null, 2));
-
-    res.redirect('/confirm');
-});
-
+// Other pages
 app.get('/index', function (req, res) {
-    res.render('index');
+  res.render('index');
 });
 
 app.get('/confirm', function (req, res) {
-    res.render('confirm');
+  res.render('confirm');
 });
 
-app.get('/about', function (req, res) {
-    res.render('about');
+
+// 404 handler
+app.use(function (req, res) {
+  res.status(404).render('404');
 });
 
-app.use(function (req, res) { 
-    res.render('404');
+// 500 error handler
+app.use(function (error, req, res, next) {
+  console.error(error);
+  res.status(500).render('500');
 });
 
-app.use(function (error, req, res, next) { 
-    res.render('500');
-});
-
+// Start server
 app.listen(3001, function () {
-    console.log('Server running on http://localhost:3001');
+  console.log('Server running on http://localhost:3001');
 });
