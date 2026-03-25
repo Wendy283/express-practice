@@ -8,11 +8,26 @@ const router = express.Router();
 
 // Get all restaurants
 router.get('/restaurants', (req, res) => {
+  let order = req.query.order;
+
+  if (order !== 'asc' && order !== 'desc') {
+    order = 'asc';
+  }
+
+  const nextOrder = order === 'asc' ? 'desc' : 'asc';
+
   const storedRestaurants = resData.getStoredRestaurants();
 
-  res.render('restaurants', {
+  storedRestaurants.sort((a, b) => {
+    return order === 'asc'
+      ? a.name.localeCompare(b.name)
+      : b.name.localeCompare(a.name);
+  });
+
+  res.render('restaurants',{ 
     numberOfRestaurants: storedRestaurants.length,
-    restaurants: storedRestaurants
+    restaurants: storedRestaurants,
+    nextOrder: nextOrder
   });
 });
 

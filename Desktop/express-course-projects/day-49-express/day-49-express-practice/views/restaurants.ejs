@@ -11,11 +11,16 @@
       <h1>Recommended restaurants</h1>
       <% if (numberOfRestaurants === 0 ) { %> 
         <p> No restaurants yet - maybe start recommending sone</p>
-         <ul id="restaurants-list"></ul>
         <% } else { %>
+          <p>find your next favorite restaurant</p>
+          <p>we found <%= numberOfRestaurants %> restaurants.</p>
+          <form action="/restaurants" method="GET">
+            <input type="hidden" value="<%= nextOrder %>" name="order">
+            <button class="btn">Change order</button>
+           </form>
+          <ul id="restaurants-list"></ul>
           <% for (const restaurant of restaurants) { %>
             <%- include('includes/restaurants/restaurant-item', {restaurant: restaurant}) %>
-     
        <% } %>
       </ul>
      <% } %> 
